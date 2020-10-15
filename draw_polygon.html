@@ -42,18 +42,22 @@
               google.maps.drawing.OverlayType.POLYGON,
             ],
           },
-          markerOptions: {
-            icon:
-              "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png",
-          },
-          circleOptions: {
-            fillColor: "#fcba03",
-            fillOpacity: 1,
-            strokeWeight: 5,
-            clickable: false,
-            editable: true,
-            zIndex: 1,
-          },
+          polygonOptions: {
+                draggable: false,
+                editable: true,
+                fillColor: '#fcba03',
+                fillOpacity: 0.5,
+                strokeColor: '#fcba03',
+            }
+
+          // circleOptions: {
+          //   fillColor: "#fcba03",
+          //   fillOpacity: 1,
+          //   strokeWeight: 5,
+          //   clickable: false,
+          //   editable: true,
+          //   zIndex: 1,
+          // },
         });
 
         drawingManager.setMap(map);
@@ -61,14 +65,32 @@
         var infowindow = new google.maps.InfoWindow();
         
         google.maps.event.addListener(drawingManager, 'polygoncomplete', function(polygon) {
-        
-        var area = google.maps.geometry.spherical.computeArea(polygon.getPath());
+          var area = google.maps.geometry.spherical.computeArea(polygon.getPath());
           infowindow.setContent((area*10.7639).toFixed(2)+" sq feet");
           infowindow.setPosition(polygon.getPath().getAt(0));
           infowindow.open(map);
+
+
+          google.maps.event.addListener(polygon, 'click', function() {
+              google.maps.event.addListener(polygon.getPath(), 'set_at', function() {
+                var area = google.maps.geometry.spherical.computeArea(polygon.getPath());
+                infowindow.setContent((area*10.7639).toFixed(2)+" sq feet");
+                infowindow.setPosition(polygon.getPath().getAt(0));
+                infowindow.open(map);
+              });
+
+              google.maps.event.addListener(polygon.getPath(), 'insert_at', function() {
+                var area = google.maps.geometry.spherical.computeArea(polygon.getPath());
+                infowindow.setContent((area*10.7639).toFixed(2)+" sq feet");
+                infowindow.setPosition(polygon.getPath().getAt(0));
+                infowindow.open(map);
+              });
+              setSelection(polygon);
+          });
         });
 
-        
+
+
       }
     </script>
     <div id="map"></div>
