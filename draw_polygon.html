@@ -89,6 +89,12 @@
           });
         });
 
+        google.maps.event.addListener(drawingManager, 'overlaycomplete', function(e) {
+        if (e.type != google.maps.drawing.OverlayType.MARKER) {
+            // Switch back to non-drawing mode after drawing a shape.
+            drawingManager.setDrawingMode(null);
+          };
+        });
 
 
       }
