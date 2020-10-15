@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Drawing Tools</title>
+    <title>Copy-Paste Monster</title>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
     <script
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBIwzALxUPNbatRBj3Xi1Uhp0fFzwWNBkE&callback=initMap&libraries=drawing,places&v=weekly"
       defer
     ></script>
-    <!-- jsFiddle will insert css and js -->
   </head>
   <body>
     <style type="text/css">
@@ -17,7 +16,7 @@
         height: 100%;
       }
 
-      /* Optional: Makes the sample page fill the window. */
+      /* Makes the sample page fill the window. */
       html,
       body {
         height: 100%;
@@ -38,6 +37,8 @@
           zoom: 16,
           mapTypeId: 'satellite'
         });
+
+        //Add search bar
         const input = document.getElementById("pac-input");
         const searchBox = new google.maps.places.SearchBox(input);
         map.controls[google.maps.ControlPosition.RIGHT_TOP].push(input);
@@ -93,6 +94,7 @@
           map.fitBounds(bounds);
         });
 
+        // Add polygon drawer
         const drawingManager = new google.maps.drawing.DrawingManager({
           drawingMode: google.maps.drawing.OverlayType.POLYGON,
           drawingControl: true,
@@ -109,29 +111,22 @@
                 fillOpacity: 0.5,
                 strokeColor: '#fcba03',
             }
-
-          // circleOptions: {
-          //   fillColor: "#fcba03",
-          //   fillOpacity: 1,
-          //   strokeWeight: 5,
-          //   clickable: false,
-          //   editable: true,
-          //   zIndex: 1,
-          // },
         });
 
         drawingManager.setMap(map);
 
         var infowindow = new google.maps.InfoWindow();
         
+        // Add info windows for area
         google.maps.event.addListener(drawingManager, 'polygoncomplete', function(polygon) {
           var area = google.maps.geometry.spherical.computeArea(polygon.getPath());
           infowindow.setContent((area*10.7639).toFixed(2)+" sq feet");
           infowindow.setPosition(polygon.getPath().getAt(0));
           infowindow.open(map);
 
-
+          // Update area when polygon edited
           google.maps.event.addListener(polygon.getPath(), 'set_at', function() {
+            //set_at refers to the vertices defined by the drawing tool
             var area = google.maps.geometry.spherical.computeArea(polygon.getPath());
             infowindow.setContent((area*10.7639).toFixed(2)+" sq feet");
             infowindow.setPosition(polygon.getPath().getAt(0));
@@ -139,6 +134,7 @@
           });
 
           google.maps.event.addListener(polygon.getPath(), 'insert_at', function() {
+            //insert_at refers to the editable edges defined by the drawing tool
             var area = google.maps.geometry.spherical.computeArea(polygon.getPath());
             infowindow.setContent((area*10.7639).toFixed(2)+" sq feet");
             infowindow.setPosition(polygon.getPath().getAt(0));
