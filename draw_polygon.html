@@ -31,8 +31,56 @@
       placeholder="Search Box"
     />
     <script type="text/javascript">
+      const initLatLon = { lat: 39.692082, lng: -86.366921 }
+      const landgridKey = ''
+
+      const getParcelData = async (lat, lon, token) =>{ 
+          let endpoint = 'landgrid.com'
+          let urlString = `https://${endpoint}/api/v1/search.json?lat=${lat}&lon=${lon}&token=${token}`;
+          console.log(urlString)
+
+          let request = await fetch(urlString, {
+              mode: 'cors',
+              // credentials: 'include',
+              headers: {
+                  'Content-Type': 'application/json',
+                  // 'Authorization': `Bearer ${oauthToken}`,
+                  // 'Access-Control-Allow-Origin': '*',
+                  // 'Access-Control-Allow-Methods': ["DELETE, POST, GET, OPTIONS"],
+                  // 'Access-Control-Allow-Headers': ["Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With"]
+              }
+          })
+          console.log(request)
+          try {
+              // Transform into JSON
+              const allData = await request.json();
+
+              return allData;
+          }
+          catch(error) {
+              console.log("error", error);
+            // appropriately handle the error
+          }
+      };
+
+      const formatGMapsData = function(apiGeoJSON) {
+          let coordList =[]
+          let coords = apiGeoJSON['results'][0]['coordinates'][0]
+          coords.forEach( i => {
+              let coord = {};
+              coord['lat'] = i[0]
+              coord['lng'] = i[0]
+              coordList.push(bldg)
+              }
+          );
+          console.log(coordList)
+          return coordList
+      }
+
+
+      
       function initMap() {
-        const initLatLon = { lat: 39.692082, lng: -86.366921 }
+        
         const map = new google.maps.Map(document.getElementById("map"), {
           center: initLatLon,
           zoom: 16,
@@ -158,6 +206,22 @@
 
 
       }
+      Promise.resolve(getParcelData(initLatLon['lat'],initLatLon['lng'],landgridKey)).then(function(data) {
+          console.log(data)
+          console.log(data['results'])
+          let gmapsCoords = formatGMapsData(data)
+
+          const parcel = new google.maps.Polygon({
+            paths: gmapsCoords,
+            strokeColor: "#FF0000",
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+            fillColor: "#FF0000",
+            fillOpacity: 0.35,
+          });
+          parcel.setMap(map);
+          // console.log(gmapsCoords);
+      })
     </script>
     <div id="map"></div>
   </body>
