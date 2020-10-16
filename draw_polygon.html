@@ -65,12 +65,15 @@
 
       const formatGMapsData = function(apiGeoJSON) {
           let coordList =[]
-          let coords = apiGeoJSON['results'][0]['coordinates'][0]
+          // console.log(apiGeoJSON['results'][0])
+          let coords = apiGeoJSON['results'][0]['geometry']['coordinates'][0]
+          // console.log(coords)
           coords.forEach( i => {
+              // console.log(i)
               let coord = {};
-              coord['lat'] = i[0]
+              coord['lat'] = i[1]
               coord['lng'] = i[0]
-              coordList.push(bldg)
+              coordList.push(coord)
               }
           );
           console.log(coordList)
@@ -203,25 +206,27 @@
             drawingManager.setDrawingMode(null);
           };
         });
+        Promise.resolve(getParcelData(initLatLon['lat'],initLatLon['lng'],landgridKey)).then(function(data) {
+            // console.log(data)
+
+            let gmapsCoords = formatGMapsData(data)
+
+            const parcel = new google.maps.Polygon({
+              paths: gmapsCoords,
+              strokeColor: "#FF0000",
+              strokeOpacity: 0.8,
+              strokeWeight: 2,
+              fillColor: "#ffffff",
+              fillOpacity: 0,
+            });
+
+            parcel.setMap(map);
+            // console.log(gmapsCoords);
+        })
 
 
       }
-      Promise.resolve(getParcelData(initLatLon['lat'],initLatLon['lng'],landgridKey)).then(function(data) {
-          console.log(data)
-          console.log(data['results'])
-          let gmapsCoords = formatGMapsData(data)
 
-          const parcel = new google.maps.Polygon({
-            paths: gmapsCoords,
-            strokeColor: "#FF0000",
-            strokeOpacity: 0.8,
-            strokeWeight: 2,
-            fillColor: "#FF0000",
-            fillOpacity: 0.35,
-          });
-          parcel.setMap(map);
-          // console.log(gmapsCoords);
-      })
     </script>
     <div id="map"></div>
   </body>
