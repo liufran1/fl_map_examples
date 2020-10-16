@@ -100,6 +100,7 @@
           zoom: 16,
           mapTypeId: 'satellite'
         });
+        map.setTilt(0);
 
         new google.maps.Marker({
           position: initLatLon,
@@ -184,11 +185,11 @@
 
         drawingManager.setMap(map);
 
-        var infowindow = new google.maps.InfoWindow();
+        let infowindow = new google.maps.InfoWindow();
         
         // Add info windows for area
         google.maps.event.addListener(drawingManager, 'polygoncomplete', function(polygon) {
-          var area = google.maps.geometry.spherical.computeArea(polygon.getPath());
+          let area = google.maps.geometry.spherical.computeArea(polygon.getPath());
           infowindow.setContent((area*10.7639).toFixed(2)+" sq feet");
           infowindow.setPosition(polygon.getPath().getAt(0));
           infowindow.open(map);
@@ -196,7 +197,7 @@
           // Update area when polygon edited
           google.maps.event.addListener(polygon.getPath(), 'set_at', function() {
             //set_at refers to the vertices defined by the drawing tool
-            var area = google.maps.geometry.spherical.computeArea(polygon.getPath());
+            let area = google.maps.geometry.spherical.computeArea(polygon.getPath());
             infowindow.setContent((area*10.7639).toFixed(2)+" sq feet");
             infowindow.setPosition(polygon.getPath().getAt(0));
             infowindow.open(map);
@@ -204,7 +205,7 @@
 
           google.maps.event.addListener(polygon.getPath(), 'insert_at', function() {
             //insert_at refers to the editable edges defined by the drawing tool
-            var area = google.maps.geometry.spherical.computeArea(polygon.getPath());
+            let area = google.maps.geometry.spherical.computeArea(polygon.getPath());
             infowindow.setContent((area*10.7639).toFixed(2)+" sq feet");
             infowindow.setPosition(polygon.getPath().getAt(0));
             infowindow.open(map);
