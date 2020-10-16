@@ -91,7 +91,14 @@
 
       
       function initMap() {
-        
+        google.maps.Polygon.prototype.getBoundingBox = function() {
+          var bounds = new google.maps.LatLngBounds();
+          this.getPath().forEach(function(element,index) {
+            bounds.extend(element)
+          });
+          return(bounds);
+        };
+
         const map = new google.maps.Map(document.getElementById("map"), {
           center: initLatLon,
           zoom: 16,
@@ -230,7 +237,21 @@
               });
 
               parcel.setMap(map);
-            }
+              new google.maps.Marker({
+                // position: parcel.getPath().getAt(0),
+                position: parcel.getBoundingBox().getCenter(),
+                map: map,
+                icon: '../res/img/empty.png',
+                label: {
+                    color: '#7732a8',
+                    // fillColor:'#ffffff',
+                    // fillOpacity: 1,
+                    fontWeight: 'bold',
+                    text: i['properties']['headline'],
+                    fontSize: '10px',
+                    },
+                });
+              }
           );
 
             
