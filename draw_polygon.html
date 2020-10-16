@@ -45,9 +45,9 @@
       const initLatLon = { lat: 39.692082, lng: -86.366921 }
       const landgridKey = ''
 
-      const getParcelData = async (lat, lon, token) =>{ 
+      const getParcelData = async (lat, lon, radius, token) =>{ 
           let endpoint = 'landgrid.com'
-          let urlString = `https://${endpoint}/api/v1/search.json?lat=${lat}&lon=${lon}&token=${token}`;
+          let urlString = `https://${endpoint}/api/v1/search.json?lat=${lat}&lon=${lon}&token=${token}&nearest=1&radius=${radius}`;
           console.log(urlString)
 
           let request = await fetch(urlString, {
@@ -76,18 +76,15 @@
 
       const formatGMapsData = function(apiGeoJSON) {
           let coordList =[]
-          // console.log(apiGeoJSON['results'][0])
-          let coords = apiGeoJSON['results'][0]['geometry']['coordinates'][0]
-          // console.log(coords)
+          console.log(apiGeoJSON)
+          let coords = apiGeoJSON['geometry']['coordinates'][0]
           coords.forEach( i => {
-              // console.log(i)
               let coord = {};
               coord['lat'] = i[1]
               coord['lng'] = i[0]
               coordList.push(coord)
               }
           );
-          console.log(coordList)
           return coordList
       }
 
@@ -218,21 +215,25 @@
             drawingManager.setDrawingMode(null);
           };
         });
-        Promise.resolve(getParcelData(initLatLon['lat'],initLatLon['lng'],landgridKey)).then(function(data) {
+        Promise.resolve(getParcelData(initLatLon['lat'],initLatLon['lng'],300,landgridKey)).then(function(data) {
             // console.log(data)
+            data['results'].forEach( i => {
+              let gmapsCoords = formatGMapsData(i)
 
-            let gmapsCoords = formatGMapsData(data)
+              const parcel = new google.maps.Polygon({
+                paths: gmapsCoords,
+                strokeColor: "#FF0000",
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: "#ffffff",
+                fillOpacity: 0,
+              });
 
-            const parcel = new google.maps.Polygon({
-              paths: gmapsCoords,
-              strokeColor: "#FF0000",
-              strokeOpacity: 0.8,
-              strokeWeight: 2,
-              fillColor: "#ffffff",
-              fillOpacity: 0,
-            });
+              parcel.setMap(map);
+            }
+          );
 
-            parcel.setMap(map);
+            
             // console.log(gmapsCoords);
         })
 
