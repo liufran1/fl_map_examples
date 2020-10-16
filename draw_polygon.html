@@ -190,7 +190,7 @@
         // Add info windows for area
         google.maps.event.addListener(drawingManager, 'polygoncomplete', function(polygon) {
           let area = google.maps.geometry.spherical.computeArea(polygon.getPath());
-          infowindow.setContent((area*10.7639).toFixed(2)+" sq feet");
+          infowindow.setContent((area*10.7639).toFixed(0)+" sq feet");
           infowindow.setPosition(polygon.getPath().getAt(0));
           infowindow.open(map);
 
@@ -198,7 +198,7 @@
           google.maps.event.addListener(polygon.getPath(), 'set_at', function() {
             //set_at refers to the vertices defined by the drawing tool
             let area = google.maps.geometry.spherical.computeArea(polygon.getPath());
-            infowindow.setContent((area*10.7639).toFixed(2)+" sq feet");
+            infowindow.setContent((area*10.7639).toFixed(0)+" sq feet");
             infowindow.setPosition(polygon.getPath().getAt(0));
             infowindow.open(map);
           });
@@ -206,7 +206,7 @@
           google.maps.event.addListener(polygon.getPath(), 'insert_at', function() {
             //insert_at refers to the editable edges defined by the drawing tool
             let area = google.maps.geometry.spherical.computeArea(polygon.getPath());
-            infowindow.setContent((area*10.7639).toFixed(2)+" sq feet");
+            infowindow.setContent((area*10.7639).toFixed(0)+" sq feet");
             infowindow.setPosition(polygon.getPath().getAt(0));
             infowindow.open(map);
           });
